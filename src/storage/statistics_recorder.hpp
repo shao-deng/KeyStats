@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../core/key_id.hpp"
 #include "storage_types.hpp"
@@ -55,7 +55,7 @@ private:
     IUtcClock& clock_;
     std::chrono::seconds flush_interval_;
     mutable std::mutex bucket_gate_;
-    std::mutex queue_gate_;
+    mutable std::mutex queue_gate_;
     std::condition_variable queue_cv_;
     std::condition_variable wait_cv_;
     std::queue<SaveCommand> queue_;

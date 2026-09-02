@@ -1,4 +1,4 @@
-#include "../src/core/key_catalog.hpp"
+﻿#include "../src/core/key_catalog.hpp"
 #include "../src/core/key_normalizer.hpp"
 #include "../src/core/keyboard_counter.hpp"
 #include "../src/storage/count_vector_codec.hpp"

@@ -1,6 +1,7 @@
-#include "application.hpp"
+﻿#include "application.hpp"
 
 #include "custom_controls.hpp"
+#include "resource.h"
 #include "raw_input.hpp"
 #include "startup.hpp"
 #include "tray.hpp"
@@ -554,7 +555,7 @@ void Layout() {
     GetClientRect(g_window, &client);
     const int width = client.right;
     const int height = client.bottom;
-    MoveWindow(g_tabs, 24, 360, width - 48, height - 420, TRUE);
+    MoveWindow(g_tabs, 24, 390, width - 48, height - 450, TRUE);
     RECT tab{};
     GetClientRect(g_tabs, &tab);
     TabCtrl_AdjustRect(g_tabs, FALSE, &tab);
@@ -565,7 +566,7 @@ void Layout() {
     ShowWindow(g_heatmap, selected == 0 ? SW_SHOW : SW_HIDE);
     ShowWindow(GetDlgItem(g_window, kIdActiveOnly), selected == 1 ? SW_SHOW : SW_HIDE);
     ShowWindow(g_list, selected == 1 ? SW_SHOW : SW_HIDE);
-    MoveWindow(g_timeline, 40, 118, width - 80, 40, TRUE);
+    MoveWindow(g_timeline, 40, 156, width - 80, 40, TRUE);
 }
 
 HWND CreateChild(LPCWSTR class_name, LPCWSTR text, DWORD style, int x, int y, int w, int h, int id) {
@@ -592,10 +593,10 @@ void CreateUi(HINSTANCE instance) {
     }
     SendMessageW(range, CB_SETCURSEL, 0, 0);
     CreateWindowExW(0, DATETIMEPICK_CLASSW, L"", WS_CHILD | WS_VISIBLE | DTS_SHORTDATEFORMAT, 156, 90, 130, 26, g_window,
-                    reinterpret_cast<HMENU>(kIdStartDate), instance, nullptr);
+                    reinterpret_cast<HMENU>(static_cast<INT_PTR>(kIdStartDate)), instance, nullptr);
     HWND start_time = CreateChild(L"COMBOBOX", L"", CBS_DROPDOWN, 294, 90, 80, 220, kIdStartTime);
     CreateWindowExW(0, DATETIMEPICK_CLASSW, L"", WS_CHILD | WS_VISIBLE | DTS_SHORTDATEFORMAT, 384, 90, 130, 26, g_window,
-                    reinterpret_cast<HMENU>(kIdEndDate), instance, nullptr);
+                    reinterpret_cast<HMENU>(static_cast<INT_PTR>(kIdEndDate)), instance, nullptr);
     HWND end_time = CreateChild(L"COMBOBOX", L"", CBS_DROPDOWN, 522, 90, 80, 220, kIdEndTime);
     for (int minute = 0; minute < 24 * 60; minute += 10) {
         wchar_t text[8];
@@ -611,25 +612,25 @@ void CreateUi(HINSTANCE instance) {
     SendMessageW(scale, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(L"平方根"));
     SendMessageW(scale, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(L"线性"));
     SendMessageW(scale, CB_SETCURSEL, 0, 0);
-    CreateChild(L"STATIC", L"时段热力图 · 所选范围按每天相同的 10 分钟时段汇总", 0, 24, 100, 420, 16, 0);
-    CreateChild(L"STATIC", L"暂无输入", 0, 900, 100, 280, 16, kIdTimelineSummary);
-    g_timeline = CreateTimelineControl(g_window, kIdTimeline, RECT{24, 118, 1200, 158});
-    CreateChild(L"STATIC", L"本次运行", 0, 40, 170, 80, 18, 0);
-    CreateChild(L"STATIC", L"0", 0, 40, 188, 200, 40, kIdTotal);
-    CreateChild(L"STATIC", L"总数量：正在加载…", 0, 40, 230, 280, 20, kIdHistory);
-    CreateChild(L"BUTTON", L"暂停采集", BS_PUSHBUTTON, 40, 258, 100, 30, kIdPause);
-    CreateChild(L"BUTTON", L"清零本次显示", BS_PUSHBUTTON, 148, 258, 120, 30, kIdClear);
-    CreateChild(L"BUTTON", L"立即保存", BS_PUSHBUTTON, 276, 258, 90, 30, kIdSave);
-    CreateChild(L"BUTTON", L"导出 CSV", BS_PUSHBUTTON, 374, 258, 90, 30, kIdExport);
+    CreateChild(L"STATIC", L"时段热力图 · 所选范围按每天相同的 10 分钟时段汇总", 0, 24, 130, 520, 18, 0);
+    CreateChild(L"STATIC", L"暂无输入", 0, 900, 130, 280, 18, kIdTimelineSummary);
+    g_timeline = CreateTimelineControl(g_window, kIdTimeline, RECT{24, 156, 1200, 196});
+    CreateChild(L"STATIC", L"本次运行", 0, 40, 220, 120, 18, 0);
+    CreateChild(L"STATIC", L"0", 0, 40, 240, 200, 40, kIdTotal);
+    CreateChild(L"STATIC", L"总数量：正在加载…", 0, 40, 280, 280, 20, kIdHistory);
+    CreateChild(L"BUTTON", L"暂停采集", BS_PUSHBUTTON, 40, 310, 100, 30, kIdPause);
+    CreateChild(L"BUTTON", L"清零本次显示", BS_PUSHBUTTON, 148, 310, 120, 30, kIdClear);
+    CreateChild(L"BUTTON", L"立即保存", BS_PUSHBUTTON, 276, 310, 90, 30, kIdSave);
+    CreateChild(L"BUTTON", L"导出 CSV", BS_PUSHBUTTON, 374, 310, 90, 30, kIdExport);
     EnableWindow(GetDlgItem(g_window, kIdSave), FALSE);
     EnableWindow(GetDlgItem(g_window, kIdExport), FALSE);
-    CreateChild(L"STATIC", L"当前按下中的键或按钮", 0, 520, 170, 220, 18, 0);
-    CreateChild(L"STATIC", L"无", 0, 520, 190, 680, 28, kIdPressed);
-    CreateChild(L"STATIC", L"等待输入…", 0, 520, 224, 680, 20, kIdLastInput);
-    CreateChild(L"STATIC", L"未识别输入：0", 0, 520, 246, 680, 20, kIdUnknown);
-    CreateChild(L"STATIC", L"本地数据：正在初始化…", 0, 520, 268, 680, 20, kIdStorage);
+    CreateChild(L"STATIC", L"当前按下中的键或按钮", 0, 520, 220, 220, 18, 0);
+    CreateChild(L"STATIC", L"无", 0, 520, 240, 680, 28, kIdPressed);
+    CreateChild(L"STATIC", L"等待输入…", 0, 520, 274, 680, 20, kIdLastInput);
+    CreateChild(L"STATIC", L"未识别输入：0", 0, 520, 296, 680, 20, kIdUnknown);
+    CreateChild(L"STATIC", L"本地数据：正在初始化…", 0, 520, 318, 680, 20, kIdStorage);
     g_tabs = CreateWindowExW(0, WC_TABCONTROLW, L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 24, 310, 1200, 480,
-                             g_window, reinterpret_cast<HMENU>(kIdTabs), instance, nullptr);
+                             g_window, reinterpret_cast<HMENU>(static_cast<INT_PTR>(kIdTabs)), instance, nullptr);
     SendMessageW(g_tabs, WM_SETFONT, reinterpret_cast<WPARAM>(g_font), TRUE);
     TCITEMW tab{};
     tab.mask = TCIF_TEXT;
@@ -643,7 +644,7 @@ void CreateUi(HINSTANCE instance) {
     CreateChild(L"BUTTON", L"只显示有次数或按下中的键", BS_AUTOCHECKBOX, 40, 360, 260, 22, kIdActiveOnly);
     g_list = CreateWindowExW(WS_EX_CLIENTEDGE, WC_LISTVIEWW, L"",
                              WS_CHILD | LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS, 40, 386, 1180, 360, g_window,
-                             reinterpret_cast<HMENU>(kIdList), instance, nullptr);
+                             reinterpret_cast<HMENU>(static_cast<INT_PTR>(kIdList)), instance, nullptr);
     ListView_SetExtendedListViewStyle(g_list, LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
     LVCOLUMNW column{};
     column.mask = LVCF_TEXT | LVCF_WIDTH;
@@ -747,6 +748,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM w_param, LPARAM l_param
         return 0;
     }
     switch (message) {
+        case WM_GETMINMAXINFO: {
+            auto* info = reinterpret_cast<MINMAXINFO*>(l_param);
+            info->ptMinTrackSize.x = 1180;
+            info->ptMinTrackSize.y = 820;
+            return 0;
+        }
         case WM_CREATE:
             g_window = hwnd;
             CreateUi(reinterpret_cast<LPCREATESTRUCT>(l_param)->hInstance);
@@ -783,7 +790,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM w_param, LPARAM l_param
             return 0;
         case WM_CLOSE:
             ShowWindow(hwnd, SW_HIDE);
-            if (g_tray) g_tray->ShowHiddenNotification();
             return 0;
         case WM_DESTROY:
             PostQuitMessage(0);
@@ -808,12 +814,15 @@ int RunApplication(HINSTANCE instance, bool start_in_background, int show_comman
     wc.hCursor = LoadCursorW(nullptr, IDC_ARROW);
     wc.hbrBackground = CreateSolidBrush(RGB(245, 246, 248));
     wc.lpszClassName = L"KeyStatsMainWindow";
-    wc.hIcon = LoadIconW(nullptr, IDI_APPLICATION);
+    wc.hIcon = LoadIconW(instance, MAKEINTRESOURCEW(IDI_KEYSTATS));
     RegisterClassW(&wc);
 
     HWND window = CreateWindowExW(0, wc.lpszClassName, L"KeyStats · 键盘与鼠标使用统计",
-                                  WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN, CW_USEDEFAULT, CW_USEDEFAULT, 1280, 860,
+                                  WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN, CW_USEDEFAULT, CW_USEDEFAULT, 1360, 900,
                                   nullptr, nullptr, instance, nullptr);
+    const auto icon = LoadIconW(instance, MAKEINTRESOURCEW(IDI_KEYSTATS));
+    SendMessageW(window, WM_SETICON, ICON_BIG, reinterpret_cast<LPARAM>(icon));
+    SendMessageW(window, WM_SETICON, ICON_SMALL, reinterpret_cast<LPARAM>(icon));
     g_window = window;
     wchar_t module_path[MAX_PATH];
     GetModuleFileNameW(nullptr, module_path, MAX_PATH);

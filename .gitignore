@@ -18,3 +18,7 @@ Data/
 *.zip
 *.log
 
+build/
+build-msvc/
+out/
+cmake-build-*/

@@ -1,4 +1,4 @@
-#include "raw_input.hpp"
+﻿#include "raw_input.hpp"
 
 #include "../core/key_catalog.hpp"
 #include "../core/key_normalizer.hpp"

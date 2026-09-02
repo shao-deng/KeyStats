@@ -1,5 +1,6 @@
-#include "tray.hpp"
+﻿#include "tray.hpp"
 
+#include "resource.h"
 #include "utf.hpp"
 
 namespace keystats {
@@ -16,7 +17,7 @@ TrayIcon::TrayIcon(HWND owner, std::function<void()> open, std::function<void()>
     data_.uID = 1;
     data_.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
     data_.uCallbackMessage = kCallbackMessage;
-    data_.hIcon = LoadIconW(nullptr, IDI_APPLICATION);
+    data_.hIcon = LoadIconW(GetModuleHandleW(nullptr), MAKEINTRESOURCEW(IDI_KEYSTATS));
     wcscpy_s(data_.szTip, L"KeyStats · 正在采集");
     Shell_NotifyIconW(NIM_ADD, &data_);
 }

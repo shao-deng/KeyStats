@@ -1,4 +1,4 @@
-#include "statistics_recorder.hpp"
+﻿#include "statistics_recorder.hpp"
 
 #include "repository.hpp"
 #include "time_buckets.hpp"

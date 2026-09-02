@@ -1,4 +1,4 @@
-#include "custom_controls.hpp"
+﻿#include "custom_controls.hpp"
 
 #include "../core/key_catalog.hpp"
 #include "utf.hpp"
@@ -196,6 +196,9 @@ LRESULT CALLBACK HeatmapProc(HWND hwnd, UINT message, WPARAM w_param, LPARAM l_p
         EndPaint(hwnd, &paint);
         return 0;
     }
+    if (message == WM_ERASEBKGND) {
+        return 1;
+    }
     if (message == WM_MOUSEMOVE) {
         TRACKMOUSEEVENT track{sizeof(TRACKMOUSEEVENT), TME_HOVER, hwnd, 400};
         TrackMouseEvent(&track);
@@ -297,6 +300,9 @@ LRESULT CALLBACK TimelineProc(HWND hwnd, UINT message, WPARAM w_param, LPARAM l_
         EndPaint(hwnd, &paint);
         return 0;
     }
+    if (message == WM_ERASEBKGND) {
+        return 1;
+    }
     return DefWindowProcW(hwnd, message, w_param, l_param);
 }
 
@@ -334,6 +340,9 @@ HWND CreateTimelineControl(HWND parent, int control_id, RECT bounds) {
 void SetHeatmapData(HWND heatmap, const std::array<std::uint64_t, kKeyCount>& counts,
                     const std::unordered_set<int>& pressed, HeatScaleMode mode) {
     if (auto* state = Heat(heatmap)) {
+        if (state->counts == counts && state->pressed == pressed && state->mode == mode) {
+            return;
+        }
         state->counts = counts;
         state->pressed = pressed;
         state->mode = mode;
@@ -343,6 +352,9 @@ void SetHeatmapData(HWND heatmap, const std::array<std::uint64_t, kKeyCount>& co
 
 void SetTimelineData(HWND timeline, const std::array<std::uint64_t, 144>& counts) {
     if (auto* state = Time(timeline)) {
+        if (state->counts == counts) {
+            return;
+        }
         state->counts = counts;
         InvalidateRect(timeline, nullptr, FALSE);
     }

@@ -1,4 +1,4 @@
-#include "settings_store.hpp"
+﻿#include "settings_store.hpp"
 
 #include <cctype>
 #include <filesystem>

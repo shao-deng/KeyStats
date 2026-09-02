@@ -1,4 +1,4 @@
-#include "key_normalizer.hpp"
+﻿#include "key_normalizer.hpp"
 
 namespace keystats {
 namespace {

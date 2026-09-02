@@ -5,7 +5,7 @@
 ## 开发环境
 
 - Windows 10 或更高版本；
-- x64 .NET 10 SDK；
+- Visual Studio 2019 或更高版本、C++20 和 CMake；
 - PowerShell 7 或 Windows PowerShell。
 
 ## 开发流程
@@ -17,9 +17,9 @@
 5. 提交 Pull Request，说明动机、行为变化和验证方式。
 
 ```powershell
-dotnet restore .\KeyStats.slnx
-dotnet build .\KeyStats.slnx -c Release --no-restore
-dotnet run --project .\tests\KeyStats.Core.Tests -c Release --no-build
+cmake -S . -B build -G "Visual Studio 16 2019" -A x64
+cmake --build build --config Release
+ctest --test-dir build -C Release --output-on-failure
 ```
 
 ## 代码约定

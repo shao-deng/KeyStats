@@ -29,21 +29,19 @@ KeyStats 是一款面向 Windows 的本地键盘与鼠标使用频率统计工�
 
 - Windows 10 或更高版本；
 - x64 处理器；
-- 源码构建需要 .NET 10 SDK；
-- 轻量发行版需要 x64 `.NET 10 Desktop Runtime`；完整自包含版无需预装运行时。
+- 源码构建需要 CMake、C++20 编译器和 Windows SDK；
 
 ## 从源码构建
 
 ```powershell
-dotnet restore .\KeyStats.slnx
-dotnet build .\KeyStats.slnx -c Release --no-restore
-dotnet run --project .\tests\KeyStats.Core.Tests -c Release --no-build
+cmake -S . -B build -G "Visual Studio 16 2019" -A x64
+cmake --build build --config Release
+ctest --test-dir build -C Release --output-on-failure
 ```
 
 生成完整自包含版和轻量版：
 
 ```powershell
-.\scripts\publish.ps1
 ```
 
 输出位于 `artifacts` 目录。
@@ -51,10 +49,10 @@ dotnet run --project .\tests\KeyStats.Core.Tests -c Release --no-build
 ## 目录结构
 
 ```text
-src/KeyStats.Core/          键位模型、归一化和计数逻辑
-src/KeyStats.Storage/       SQLite、分钟聚合、设置与导出
-src/KeyStats.App/           WPF 界面、Raw Input 和托盘生命周期
-tests/KeyStats.Core.Tests/  无第三方测试框架的回归测试
+src/core/                   键位模型、归一化和计数逻辑
+src/storage/                SQLite、分钟聚合、设置与导出
+src/app/                    Win32 界面、Raw Input 和托盘生命周期
+tests/test_main.cpp         无第三方测试框架的 C++ 回归测试
 docs/                       使用、构建、隐私和测试说明
 scripts/                    发行包构建脚本
 ```

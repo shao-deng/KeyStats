@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "key_definition.hpp"
 #include "key_id.hpp"

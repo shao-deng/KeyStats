@@ -1,39 +1,58 @@
-# 构建与发布
+# 构建与测试
 
-## 环境
+项目运行时依赖 Windows 10 或更高版本、C++20 编译器。SQLite3 的头文件和
+MSVC 库已经放在 `third_party/sqlite` 中。
 
-- Windows x64；
-- .NET 10 SDK；
-- PowerShell。
+## 配置
 
-仓库的 `global.json` 指定 .NET SDK 10.0.400，并允许使用同一功能带的更新补丁版本。
+```powershell
+cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+```
+
+如果使用 MinGW，也可以把生成器替换为本机可用的 CMake 生成器。
 
 ## 构建
 
-```powershell
-dotnet restore .\KeyStats.slnx
-dotnet build .\KeyStats.slnx -c Release --no-restore
-```
-
-## 回归测试
-
-测试项目是一个无第三方测试框架的控制台程序：
+也可以让批处理脚本自动检测本机 MSVC：
 
 ```powershell
-dotnet run --project .\tests\KeyStats.Core.Tests -c Release --no-build
+scripts\build.bat
 ```
 
-进程返回码为 0 表示全部通过。
-
-## 发行包
+首次切换生成器或需要彻底重建时使用：
 
 ```powershell
-.\scripts\publish.ps1
+scripts\build.bat /clean /test
 ```
 
-脚本会生成：
+手动构建方式如下：
 
-- `KeyStats-V1.0-full-win-x64.zip`：包含 .NET 桌面运行时；
-- `KeyStats-V1.0-lite-win-x64.zip`：依赖 x64 .NET 10 Desktop Runtime；
-- `SHA256SUMS.txt`：两个 ZIP 的 SHA-256。
+```powershell
+cmake --build build --config Release
+```
 
+生成的程序为 `build/Release/KeyStats.exe`，测试程序为
+`build/Release/KeyStatsTests.exe`。
+
+## 测试
+
+```powershell
+ctest --test-dir build -C Release --output-on-failure
+```
+
+CMake 默认使用项目内置的 SQLite3。如果要替换为系统版本，也可以使用 vcpkg：
+
+```powershell
+vcpkg install sqlite3:x64-windows
+cmake -S . -B build -G "Visual Studio 16 2019" -A x64 `
+  -DCMAKE_TOOLCHAIN_FILE=C:/path/to/vcpkg/scripts/buildsystems/vcpkg.cmake
+```
+
+也可以从 SQLite 官方发行包获取开发文件，然后指定安装目录：
+
+```powershell
+cmake -S . -B build -G "Visual Studio 16 2019" -A x64 `
+  -DSQLite3_ROOT=C:/path/to/sqlite3
+```
+
+该目录应包含 `include/sqlite3.h` 和 `lib/sqlite3.lib`。
