@@ -63,7 +63,14 @@ set(KEYSTATS_APP
 )
 
 add_executable(KeyStats WIN32 ${KEYSTATS_CORE} ${KEYSTATS_STORAGE} ${KEYSTATS_APP})
-target_include_directories(KeyStats PRIVATE src)
+# Resource Compiler resolves both included headers and resource files through
+# the target include path. Keep these paths explicit so MSBuild can invoke rc.exe
+# from the out-of-source build directory.
+target_include_directories(KeyStats PRIVATE
+    src
+    src/app
+    src/app/assets
+)
 target_link_libraries(KeyStats PRIVATE SQLite3::SQLite3 comctl32 comdlg32 shell32 advapi32 gdi32 user32)
 target_compile_definitions(KeyStats PRIVATE UNICODE _UNICODE WIN32_LEAN_AND_MEAN NOMINMAX)
 if (MSVC)
